@@ -113,9 +113,13 @@
 //   );
 // };
 
+
+
+
 import React, { useState } from 'react';
 import { Home, Menu, X, Phone, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   activeSection: string;
@@ -124,16 +128,31 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'properties', label: 'Properties' },
     { id: 'about', label: 'About' },
-    { id: 'contact', label: 'Contact' }
+    { id: 'contact', label: 'Contact' },
+    { id: 'admin', label: 'Admin' } // ✅ Added Admin here
   ];
 
+  const handleNavigation = (id: string) => {
+    if (id === 'admin') {
+      navigate('/admin/login');
+    } else {
+      onNavigate(id);
+    }
+  };
+
   return (
-    <header className="bg-white shadow-lg fixed w-full top-0 z-50">
+    <motion.header
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white shadow-lg fixed w-full top-0 z-50"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -150,7 +169,7 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
             {navItems.map((item) => (
               <div key={item.id} className="relative pb-1">
                 <button
-                  onClick={() => onNavigate(item.id)}
+                  onClick={() => handleNavigation(item.id)}
                   className={`relative z-10 text-base font-semibold transition-colors px-5 py-2 rounded-md ${
                     activeSection === item.id ? 'text-blue-700' : 'text-gray-700 hover:text-blue-700'
                   }`}
@@ -158,8 +177,7 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
                   {item.label}
                 </button>
 
-                {/* Animated underline */}
-                {activeSection === item.id && (
+                {activeSection === item.id && item.id !== 'admin' && (
                   <motion.div
                     layoutId="underline"
                     className="absolute bottom-0 left-0 right-0 h-[3px] bg-blue-700 rounded-full"
@@ -172,12 +190,12 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
 
           {/* Contact Info */}
           <div className="hidden lg:flex items-center space-x-4 text-sm text-gray-600">
-            <motion.div whileHover={{ scale: 1.05 }} className="flex items-center space-x-1">
+            {/* <motion.div whileHover={{ scale: 1.05 }} className="flex items-center space-x-1">
               <Phone className="h-4 w-4" />
-              <a href="tel:++917989114553" className="hover:underline">
+              <a href="tel:+917989114553" className="hover:underline">
                 +91 79891 14553
               </a>
-            </motion.div>
+            </motion.div> */}
             <motion.div whileHover={{ scale: 1.05 }} className="flex items-center space-x-1">
               <Mail className="h-4 w-4" />
               <a href="mailto:suryapropertyconsultant.info@gmail.com" className="hover:underline">
@@ -186,7 +204,7 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
             </motion.div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu toggle */}
           <button
             className="md:hidden p-2 rounded-md text-gray-700 hover:text-blue-700"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -211,7 +229,7 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
                   <button
                     key={item.id}
                     onClick={() => {
-                      onNavigate(item.id);
+                      handleNavigation(item.id);
                       setIsMobileMenuOpen(false);
                     }}
                     className={`block w-full text-left px-3 py-2 text-base font-medium transition-colors ${
@@ -228,6 +246,6 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => 
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 };

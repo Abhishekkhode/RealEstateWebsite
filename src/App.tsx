@@ -10,8 +10,8 @@ import { PropertyCard } from './components/PropertyCard';
 import { PropertyModal } from './components/PropertyModal';
 import { PropertyFilters } from './components/PropertyFilters';
 import { About } from './components/About';
-import { Contact } from './components/Contact';
-import { Footer } from './components/Footer';
+import  {Contact}  from './components/Contact';
+import  Footer  from './components/Footer';
 import { Property } from './types/Property';
 import { apiService } from './services/api';
 

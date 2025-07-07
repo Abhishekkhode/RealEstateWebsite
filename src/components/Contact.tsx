@@ -1,3 +1,6 @@
+
+
+// Working Initial Code for sending Mails using Email JS
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Clock } from 'lucide-react';
 import { motion } from "framer-motion";
@@ -83,20 +86,20 @@ const handleChange = (
 
   return (
     <section className="py-16 bg-white">
-      {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4">Thank you!</h2>
-            <p>Your message has been sent. We'll get back to you soon.</p>
-            <button
-              className="mt-6 px-6 py-2 bg-blue-700 text-white rounded-lg"
-              onClick={() => setShowPopup(false)}
-            >
-              Close
-            </button>
+        {showPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+              <h2 className="text-2xl font-bold mb-4">Thank you!</h2>
+              <p>Your message has been sent. We'll get back to you soon.</p>
+              <button
+                className="mt-6 px-6 py-2 bg-blue-700 text-white rounded-lg"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           {/* <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -175,7 +178,7 @@ const handleChange = (
               <div className="text-center text-gray-500">
                 <MapPin className="h-12 w-12 mx-auto mb-2" />
                 <p>Interactive Map</p>
-                <p className="text-sm">123 Real Estate Ave, Beverly Hills, CA</p>
+                <p className="text-sm">Hyderabad, Telangana</p>
               </div>
             </div>
           </div>
@@ -333,8 +336,6 @@ const handleChange = (
                 </>
               )}
             </button>
-
-
             </form>
           </div>
         </div>
@@ -342,3 +343,319 @@ const handleChange = (
     </section>
   );
 };
+
+
+
+
+
+
+
+
+
+// Template for Sedning Mails from Backend - MailerSend
+
+// // src/pages/Contact.tsx
+// import React, { useState } from 'react';
+// import { Mail, Phone, MapPin, Loader, Send, CheckCircle2 } from 'lucide-react';
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { FaBuilding } from 'react-icons/fa'; // Assuming FaBuilding is used from react-icons/fa
+
+// const Contact: React.FC = () => {
+//   const [formData, setFormData] = useState({
+//     name: '',
+//     email: '',
+//     number: '', // Renamed from 'phone' to 'number' for consistency with backend DTO
+//     subject: '',
+//     message: '',
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle'); // 'idle', 'success', 'error'
+
+//   const subjects = [
+//     'General Inquiry',
+//     'Property Listing',
+//     'Buying/Selling Inquiry',
+//     'Rental Inquiry',
+//     'Feedback',
+//     'Other',
+//   ];
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+//     const { name, value } = e.target;
+
+//     if (name === "number") { // Handle phone number formatting
+//       const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+//       let formatted = digitsOnly;
+//       if (digitsOnly.length > 5) {
+//         formatted = `${digitsOnly.slice(0, 5)} ${digitsOnly.slice(5)}`;
+//       }
+//       setFormData((prevData) => ({ ...prevData, [name]: formatted }));
+//       return;
+//     }
+
+//     setFormData((prevData) => ({
+//       ...prevData,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setSubmissionStatus('idle'); // Reset status on new submission attempt
+
+//     // Remove spaces from the number before sending to backend
+//     const rawNumber = formData.number.replace(/\s/g, '');
+
+//     const dataToSend = {
+//       ...formData,
+//       number: rawNumber, // Send raw digits for the number field
+//       type: "general_inquiry", // Explicitly set type for general contact form
+//     };
+
+//     try {
+//       // IMPORTANT: Use absolute URL if your React app and Spring Boot are on different ports/domains
+//       const response = await fetch('http://localhost:8080/api/support/contact', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(dataToSend),
+//       });
+
+//       if (!response.ok) {
+//           const errorData = await response.json();
+//           throw new Error(errorData.info || `HTTP error! Status: ${response.status}`);
+//       }
+
+//       const result = await response.json();
+
+//       if (result.status === 'sent') {
+//         setSubmissionStatus('success');
+//         setFormData({ name: '', email: '', number: '', subject: '', message: '' }); // Clear form
+//       } else {
+//         setSubmissionStatus('error');
+//         console.error('Backend reported error:', result.info);
+//         // Display a more user-friendly error from backend if available
+//         alert(`Failed to send message: ${result.info || 'Please check your form and try again.'}`);
+//       }
+//     } catch (error: any) {
+//       setSubmissionStatus('error');
+//       console.error('Fetch error:', error);
+//       alert(`Something went wrong. Please try again later. Error: ${error.message || 'Network error.'}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+//       <div className="max-w-7xl mx-auto">
+//         <motion.h1
+//           className="text-4xl font-extrabold text-gray-900 text-center mb-12"
+//           initial={{ opacity: 0, y: -20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           transition={{ duration: 0.6 }}
+//         >
+//           Contact Us
+//         </motion.h1>
+
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-xl shadow-lg">
+//           {/* Contact Information Section */}
+//           <motion.div
+//             className="space-y-8"
+//             initial={{ opacity: 0, x: -20 }}
+//             animate={{ opacity: 1, x: 0 }}
+//             transition={{ duration: 0.6, delay: 0.2 }}
+//           >
+//             <div>
+//               <h2 className="text-2xl font-bold text-gray-800 mb-4">Get in Touch</h2>
+//               <p className="text-gray-600 leading-relaxed">
+//                 Have questions, feedback, or need assistance? Reach out to us through any of the channels below, or use the contact form. We're here to help!
+//               </p>
+//             </div>
+
+//             <div className="space-y-6">
+//               <div className="flex items-start space-x-4">
+//                 <FaBuilding className="flex-shrink-0 text-blue-600 mt-1" size={24} />
+//                 <div>
+//                   <h3 className="text-lg font-semibold text-gray-800">Company Name</h3>
+//                   <p className="text-gray-600">Suryapropertyconsultant</p> {/* Updated from 'sxy.' */}
+//                 </div>
+//               </div>
+//               <div className="flex items-start space-x-4">
+//                 <Phone className="flex-shrink-0 text-blue-600 mt-1" size={24} />
+//                 <div>
+//                   <h3 className="text-lg font-semibold text-gray-800">Call Us</h3>
+//                   <p className="text-gray-600">+91 12345 67890, +91 98765 43210</p> {/* Example numbers */}
+//                 </div>
+//               </div>
+//               <div className="flex items-start space-x-4">
+//                 <Mail className="flex-shrink-0 text-blue-600 mt-1" size={24} />
+//                 <div>
+//                   <h3 className="text-lg font-semibold text-gray-800">Email Us</h3>
+//                   <p className="text-gray-600">info@suryapropertyconsultant.com</p> {/* Example email */}
+//                 </div>
+//               </div>
+//               <div className="flex items-start space-x-4">
+//                 <MapPin className="flex-shrink-0 text-blue-600 mt-1" size={24} />
+//                 <div>
+//                   <h3 className="text-lg font-semibold text-gray-800">Visit Us</h3>
+//                   <p className="text-gray-600">123 Real Estate Avenue, Property City, PC 78901</p>
+//                 </div>
+//               </div>
+//             </div>
+//             {/* Map placeholder */}
+//             <div className="mt-8 bg-gray-200 h-64 rounded-lg flex items-center justify-center">
+//               <div className="text-center text-gray-500">
+//                 <MapPin className="h-12 w-12 mx-auto mb-2" />
+//                 <p>Interactive Map</p>
+//                 <p className="text-sm">Your Location Here</p>
+//               </div>
+//             </div>
+//           </motion.div>
+
+//           {/* Contact Form Section */}
+//           <motion.div
+//             className="bg-gray-50 p-8 rounded-xl shadow-inner"
+//             initial={{ opacity: 0, x: 20 }}
+//             animate={{ opacity: 1, x: 0 }}
+//             transition={{ duration: 0.6, delay: 0.3 }}
+//           >
+//             <h2 className="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h2>
+//             <AnimatePresence mode="wait">
+//               {submissionStatus === 'success' ? (
+//                 <motion.div
+//                   key="success"
+//                   initial={{ opacity: 0, y: 20 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   exit={{ opacity: 0, y: -20 }}
+//                   className="text-center py-10"
+//                 >
+//                   <CheckCircle2 className="text-green-600 w-16 h-16 mx-auto mb-4" />
+//                   <p className="text-green-700 text-lg font-medium">
+//                     Your message has been sent successfully! We'll get back to you shortly.
+//                   </p>
+//                   <button
+//                     onClick={() => setSubmissionStatus('idle')}
+//                     className="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+//                   >
+//                     Send Another Message
+//                   </button>
+//                 </motion.div>
+//               ) : (
+//                 <motion.form
+//                   key="form"
+//                   onSubmit={handleSubmit}
+//                   className="space-y-6"
+//                   initial={{ opacity: 0, y: 20 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   exit={{ opacity: 0, y: -20 }}
+//                 >
+//                   <div>
+//                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name</label>
+//                     <input
+//                       type="text"
+//                       id="name"
+//                       name="name"
+//                       value={formData.name}
+//                       onChange={handleChange}
+//                       className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+//                       required
+//                     />
+//                   </div>
+//                   <div>
+//                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Your Email</label>
+//                     <input
+//                       type="email"
+//                       id="email"
+//                       name="email"
+//                       value={formData.email}
+//                       onChange={handleChange}
+//                       className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+//                       required
+//                     />
+//                   </div>
+//                   <div>
+//                     <label htmlFor="number" className="block text-sm font-medium text-gray-700">Your Phone Number</label>
+//                     <div className="relative">
+//                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+//                         <span className="text-gray-500">+91</span>
+//                       </div>
+//                       <input
+//                         type="tel"
+//                         id="number"
+//                         name="number"
+//                         value={formData.number}
+//                         onChange={handleChange}
+//                         className="mt-1 block w-full pl-12 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+//                         placeholder="e.g., 12345 67890"
+//                         maxLength={11} // Max 10 digits + 1 space
+//                         required
+//                       />
+//                     </div>
+//                   </div>
+//                   <div>
+//                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Subject</label>
+//                     <select
+//                       id="subject"
+//                       name="subject"
+//                       value={formData.subject}
+//                       onChange={handleChange}
+//                       className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+//                       required
+//                     >
+//                       <option value="">Select a subject</option>
+//                       {subjects.map((sub) => (
+//                         <option key={sub} value={sub}>{sub}</option>
+//                       ))}
+//                     </select>
+//                   </div>
+//                   <div>
+//                     <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
+//                     <textarea
+//                       id="message"
+//                       name="message"
+//                       rows={5}
+//                       value={formData.message}
+//                       onChange={handleChange}
+//                       className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+//                       placeholder="Your message here..."
+//                       required
+//                     ></textarea>
+//                   </div>
+//                   <div>
+//                     <button
+//                       type="submit"
+//                       disabled={loading}
+//                       className={`w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white transition-colors
+//                         ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'}`}
+//                     >
+//                       {loading ? (
+//                         <>
+//                           <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+//                           Sending...
+//                         </>
+//                       ) : (
+//                         <>
+//                           <Send className="-ml-1 mr-3 h-5 w-5" />
+//                           Send Message
+//                         </>
+//                       )}
+//                     </button>
+//                   </div>
+//                   {submissionStatus === 'error' && (
+//                     <p className="text-red-500 text-sm text-center mt-4">Failed to send message. Please try again.</p>
+//                   )}
+//                 </motion.form>
+//               )}
+//             </AnimatePresence>
+//           </motion.div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Contact;

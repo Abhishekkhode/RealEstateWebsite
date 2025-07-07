@@ -25,7 +25,8 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({ property, onSave, on
     yearBuilt: '',
     parking: '',
     featured: false,
-    images: ['']
+    images: [''],
+    possession: ''
   });
 
   // Note: The following states (properties, showForm, editingProperty) seem to be misplaced
@@ -69,7 +70,8 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({ property, onSave, on
         yearBuilt: property.yearBuilt?.toString() || '', // Safely convert number to string
         parking: property.parking?.toString() || '', // Safely convert number to string
         featured: property.featured ?? false, // Default to false if null/undefined
-        images: property.images || [''] // Ensure images is an array, default to ['']
+        images: property.images || [''], // Ensure images is an array, default to ['']
+        possession: property.possession || '' // Ensure possession is string
       });
     } else {
       // Reset form data when no property is being edited (e.g., for 'Add New Property')
@@ -87,7 +89,8 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({ property, onSave, on
         yearBuilt: '',
         parking: '',
         featured: false,
-        images: ['']
+        images: [''],
+        possession: ''
       });
     }
   }, [property]);
@@ -314,7 +317,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({ property, onSave, on
               >
                 <option value="house">House</option>
                 <option value="apartment">Apartment</option>
-                <option value="condo">Condo</option>
+                <option value="condo">Open Plot</option>
                 <option value="townhouse">Townhouse</option>
               </select>
             </div>

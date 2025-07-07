@@ -369,9 +369,10 @@
 
 // src/components/admin/AdminDashboard.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, LogOut, Search, Trash2 } from 'lucide-react';
+import { Plus, LogOut, Search, Trash2, Users } from 'lucide-react';
 import { Property } from '../../types/Property';
-import { PropertyForm } from './PropertyForm(WORKING)';
+// import { PropertyForm } from './PropertyForm(WORKING)';
+import { PropertyFormWORKING } from './PropertyForm(WORKING)';
 import { PropertyCard } from '../PropertyCard';
 import { apiService } from '../../services/api';
 import { motion } from 'framer-motion';
@@ -379,6 +380,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import ConfirmLogoutModal from '../ConfirmLogoutModal';
 import { PropertyDetailsModal } from './PropertyDetailsModal'; // Import the new modal component
+import AgentManagementModal from './AgentManagementModal'; // adjust path if needed
+
 
 export const AdminDashboard: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -389,6 +392,8 @@ export const AdminDashboard: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null); // State to hold the property for details modal
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAgentModal, setShowAgentModal] = useState(false);
+
 
   const navigate = useNavigate();
   const { setAdmin, logout } = useAuth();
@@ -433,21 +438,44 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Old and Working Version
+  // const handleUpdateProperty = async (propertyData: Omit<Property, 'id'>) => {
+  //   if (editingProperty) {
+  //     try {
+  //       const updatedProperty = await apiService.updateProperty(editingProperty.id!, propertyData);
+  //       setProperties(prev =>
+  //         prev.map(p => (p.id === editingProperty.id ? updatedProperty : p))
+  //       );
+  //       setEditingProperty(null);
+  //       setShowForm(false);
+  //     } catch (err) {
+  //       console.error("Error updating property:", err);
+  //       setError("Failed to update property. Please try again.");
+  //     }
+  //   }
+  // };
+
+  // Handling Update Property with optional chaining
+
   const handleUpdateProperty = async (propertyData: Omit<Property, 'id'>) => {
-    if (editingProperty) {
-      try {
-        const updatedProperty = await apiService.updateProperty(editingProperty.id, propertyData);
-        setProperties(prev =>
-          prev.map(p => (p.id === editingProperty.id ? updatedProperty : p))
-        );
-        setEditingProperty(null);
-        setShowForm(false);
-      } catch (err) {
-        console.error("Error updating property:", err);
-        setError("Failed to update property. Please try again.");
-      }
+  if (editingProperty?.id) {
+    try {
+      const updatedProperty = await apiService.updateProperty(editingProperty.id, propertyData);
+      setProperties(prev =>
+        prev.map(p => (p.id === editingProperty.id ? updatedProperty : p))
+      );
+      setEditingProperty(null);
+      setShowForm(false);
+    } catch (err) {
+      console.error("Error updating property:", err);
+      setError("Failed to update property. Please try again.");
     }
-  };
+  } else {
+    console.warn("Editing property is missing a valid ID.");
+    setError("Invalid property selected for update.");
+  }
+};
+
 
   const handleDeleteProperty = async (id: string) => {
     if (confirm('Are you sure you want to delete this property?')) {
@@ -497,7 +525,7 @@ export const AdminDashboard: React.FC = () => {
           onClick={fetchProperties}
           className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold"
         >
-          Retry
+          Retry1
         </button>
       </div>
     );
@@ -521,6 +549,18 @@ export const AdminDashboard: React.FC = () => {
               <Plus className="h-5 w-5" />
               <span>Add Property</span>
             </button>
+            <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowAgentModal(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-colors"
+          >
+            <Users className="h-5 w-5" />
+            <span>Manage Agents</span>
+          </motion.button>
+
+
+
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
@@ -601,7 +641,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProperties.map((property) => (
-            <div key={property.id} className="relative group">
+            <div key={property.id ?? property.title } className="relative group">
               <PropertyCard
                 property={property}
                 onViewDetails={handleViewDetailsClick}
@@ -613,9 +653,10 @@ export const AdminDashboard: React.FC = () => {
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleDeleteProperty(property.id)}
+                    onClick={() => property.id && handleDeleteProperty(property.id)}
                     className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-colors"
                     title="Delete Property"
+                    disabled={!property.id}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -634,7 +675,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Property Form Modal (for Add/Edit) */}
       {showForm && (
-        <PropertyForm
+        <PropertyFormWORKING
           property={editingProperty}
           onSave={editingProperty ? handleUpdateProperty : handleCreateProperty}
           onCancel={handleCloseForm}
@@ -648,6 +689,14 @@ export const AdminDashboard: React.FC = () => {
           onClose={handleCloseDetailsModal}
         />
       )}
+
+      {showAgentModal && (
+      <AgentManagementModal
+        isOpen={showAgentModal}
+        onClose={() => setShowAgentModal(false)}
+      />
+    )}
+
     </div>
   );
 };

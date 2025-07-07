@@ -64,9 +64,9 @@ export const AdminLogin: React.FC = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Home className="h-10 w-10 text-blue-700" />
-            <span className="text-2xl font-bold text-gray-900">EliteEstates</span>
+            <span className="text-2xl font-bold text-gray-900">Surya Property Consultant</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Portal</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Login</h1>
           <p className="text-gray-600">Sign in to manage properties</p>
         </div>
 

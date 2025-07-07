@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, Users, Home, TrendingUp } from 'lucide-react';
+import { Award, Users, Home, TrendingUp, Stamp, ShieldCheck } from 'lucide-react';
 import { BiCertification } from 'react-icons/bi';
 import { FaCertificate } from 'react-icons/fa';
 import { GrCertificate } from 'react-icons/gr';
@@ -92,9 +92,20 @@ export const About: React.FC = () => {
               alt="Real estate team"
               className="rounded-2xl shadow-xl"
             />
-            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg">
-              <div className="text-2xl font-bold text-blue-700">A+</div>
-              <div className="text-sm text-gray-600">BBB </div>
+            {/* <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg">
+              {/* <div className="text-2xl font-bold text-blue-700">A+</div> */}
+              {/* <div className="text-blue-700">
+                <ShieldCheck className="h-8 w-8" />
+              </div>
+              <div className="text-sm text-gray-600">Verified Agents</div> */}
+            {/* </div> */}
+            <div className="absolute -bottom-6 -left-6 bg-white p-3 rounded-xl shadow-lg">
+  {/* Container for the ShieldCheck icon */}
+              <div className="text-blue-700 mb-1 flex justify-center"> {/* Added flex and justify-center to center the icon horizontally */}
+                <ShieldCheck className="h-8 w-8" />
+              </div>
+              {/* Container for the text */}
+              <div className="text-xs text-gray-600 whitespace-nowrap text-center"><strong>Certified Agents</strong></div> {/* Added text-center to center the text horizontally */}
             </div>
           </div>
         </div>
